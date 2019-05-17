@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.stylefeng.guns.modular.system.mapper.NoteMapper">
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="cn.stylefeng.guns.modular.system.entity.Note">
+        <id column="NOTE_ID" property="noteId"/>
+        <result column="CONTENT" property="content"/>
+        <result column="TITLE" property="title" />
+        <result column="FILE_URL" property="fileUrl" />
+        <result column="CREATE_USER_ID" property="createUserId"/>
+        <result column="CREATE_DATE" property="createDate"/>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        NOTE_ID AS noteId, CONTENT AS content,TITLE AS title,FILE_URL AS fileUrl, CREATE_USER_ID AS createUserId,
+        CREATE_DATE AS createDate
+    </sql>
+    <sql id="Base_Column_List_With_Url">
+        a.NOTE_ID AS noteId, a.CONTENT AS content,a.TITLE AS title,b.URL AS url, a.CREATE_USER_ID AS createUserId,
+        a.CREATE_DATE AS createDate
+    </sql>
+    
+    <sql id="Base_Column_List_With_Pwd">
+		 NOTE_ID AS noteId, CONTENT AS content,TITLE AS title,FILE_URL AS fileUrl, CREATE_USER_ID AS createUserId,
+        CREATE_DATE AS createDate
+	</sql>
+	<update id="setStatus">
+		update note set STATUS = #{status} where NOTE_ID = #{noteId}
+	</update>
+    <select id="selectNotes" resultType="map">
+        select
+        <include refid="Base_Column_List"/>
+        from note where STATUS != 'DELETED'
+        <if test="content != null and content != ''">
+            and CONTENT like CONCAT('%',#{content},'%')
+        </if>
+        <if test="title != null and tile != ''">
+            and TITLE like CONCAT('%',#{title},'%')
+        </if>
+        <if test="beginTime != null and beginTime != '' and endTime != null and endTime != ''">
+            and (CREATE_DATE between CONCAT(#{beginTime},' 00:00:00') and CONCAT(#{endTime},' 23:59:59'))
+        </if>
+    </select>
+</mapper>
+    
